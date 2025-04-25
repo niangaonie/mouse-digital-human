@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>会眨眼的小鼠</title>
+    <style>
+        /* 保持原有布局样式不变 */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f0f0f0;
+            overflow: hidden;
+        }
+
+        #mouse-container {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        /* 新增加载闭眼图到内存 */
+        body::after {
+            content: url(mouse-close.png);
+            display: none;
+        }
+
+        #mouse-character {
+            /* 保持原有呼吸动画 */
+            animation: breath 4s ease-in-out infinite;
+            /* 新增加眨眼动画 */
+            animation: breath 4s ease-in-out infinite, blink 5s infinite;
+           
+         image-rendering: crisp-edges;
+         backface-visibility: hidden;
+        }
+
+        /* 呼吸动画 */
+        @keyframes breath {
+            0% { transform: scale(0.98); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(0.98); }
+        }
+
+        /* 眨眼动画 */
+        @keyframes blink {
+            0%, 96%, 100% { opacity: 1; content: url(mouse-open.png); }
+            97%, 99% { opacity: 0.8; content: url(mouse-close.png); }
+        }
+        #dialog-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(0%, 120%);
+            background: rgba(0,0,0,0.8);
+            color: rgba(255, 255, 255, 0.932);
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-family: Arial;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 50px 12px rgba(0,0,0,0.2);
+        }
+        #dialog-box.show {
+            opacity: 1;
+            transform: translate(20%, 200%);
+        }
+    </style>
+</head>
+<body>
+    <div id="mouse-container">
+        <img src="mouse-open.png" id="mouse-character" alt="小鼠数字人">
+    </div>
+    <div id="dialog-box">我是数经鼠鼠小助手，有什么能帮您的？</div>
+
+    
+
+    <script>
+        // 保持原有自适应逻辑
+        function adjustSize() {
+            const container = document.getElementById('mouse-container');
+            const img = document.getElementById('mouse-character');
+            
+            const windowRatio = window.innerWidth / window.innerHeight;
+            const imgRatio = img.naturalWidth / img.naturalHeight;
+
+            if (windowRatio > imgRatio) {
+                container.style.maxHeight = "90vh";
+                container.style.maxWidth = "none";
+            } else {
+                container.style.maxWidth = "90vw";
+                container.style.maxHeight = "none";
+            }
+        }
+
+        // 初始化执行
+        adjustSize();
+        window.addEventListener('resize', adjustSize);
+
+        // 增强型眨眼控制（可选）
+        let blinkInterval = setInterval(() => {
+            const mouse = document.getElementById('mouse-character');
+            mouse.style.opacity = 0.8;
+            mouse.src = 'mouse-close.png';
+            
+            setTimeout(() => {
+                mouse.style.opacity = 1;
+                mouse.src = 'mouse-open.png';
+            }, 200); // 眨眼持续时间
+        }, 5000); // 每5秒眨眼一次
+         // 在原有脚本末尾添加以下代码
+         const mouseImg = document.getElementById('mouse-character');
+        const dialog = document.getElementById('dialog-box');
+
+        // 点击交互
+        mouseImg.addEventListener('click', () => {
+            dialog.classList.add('show');
+            setTimeout(() => {
+                dialog.classList.remove('show');
+            }, 2000); // 2秒后自动消失
+        });
+
+        // 增强移动端点击体验
+        mouseImg.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // 防止移动端触发长按菜单
+            dialog.classList.add('show');
+            setTimeout(() => dialog.classList.remove('show'), 2000);
+        });
+    </script>
+</body>
+</html>
